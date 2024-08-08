@@ -1,0 +1,7 @@
+able to type ----
+able to backspace -----
+able to select and change to bold ---
+able to select and change to italic ---
+able to select and change the font
+able to highlight the text ---
+able to delete ----
