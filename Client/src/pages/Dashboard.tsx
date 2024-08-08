@@ -1,5 +1,15 @@
-import { Box, Flex, Text, useColorMode } from "@chakra-ui/react";
-import { color } from "framer-motion";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  Flex,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
+  useColorMode,
+} from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 
 const Dashboard = () => {
@@ -132,7 +142,15 @@ const Dashboard = () => {
     if (key === "Backspace") handleBackSpace();
     else if (key === "Delete") handleDelete();
     else if (e.ctrlKey) handleControl(e);
-    else if (/^[a-zA-Z,.?;:'"&!-@#$%*()^{} ]$/.test(key) && !e.ctrlKey) {
+    else if (key === "Enter") {
+      setUserInd((prev) => {
+        const span = document.createElement("span");
+        span.textContent = " ";
+        span.style.width = "100%";
+        text.current?.insertBefore(span, cursor.current);
+        return prev + 1;
+      });
+    } else if (/^[a-zA-Z,.?;:'"&!-@#$%*()^{} ]$/.test(key) && !e.ctrlKey) {
       setUserInd((prev) => {
         //  creating letter span
         const span = document.createElement("span");
@@ -157,16 +175,53 @@ const Dashboard = () => {
     }
   };
 
+  const getSelectionDirection = (
+    selection: Selection
+  ): "forward" | "backward" => {
+    const range = selection.getRangeAt(0);
+    const startContainer = range.startContainer;
+    const endContainer = range.endContainer;
+    const startOffset = range.startOffset;
+    const endOffset = range.endOffset;
+
+    const isTextNode = (node: Node): node is Text =>
+      node.nodeType === Node.TEXT_NODE;
+
+    if (startContainer === endContainer) {
+      return startOffset <= endOffset ? "forward" : "backward";
+    }
+
+    const startNode = isTextNode(startContainer)
+      ? startContainer.parentNode
+      : startContainer;
+    const endNode = isTextNode(endContainer)
+      ? endContainer.parentNode
+      : endContainer;
+
+    if (startNode === endNode) {
+      return startOffset <= endOffset ? "forward" : "backward";
+    }
+
+    const startPos = startNode.compareDocumentPosition(endNode);
+    return startPos & Node.DOCUMENT_POSITION_FOLLOWING ? "forward" : "backward";
+  };
+
   const handleSelect = () => {
     const selection = document.getSelection();
     if (selection) {
+      const direction = getSelectionDirection(selection);
+
+      // not able to get direction
       let lastNode: Node | null | ParentNode = selection.focusNode;
       if (!(lastNode instanceof HTMLSpanElement) && lastNode)
         lastNode = lastNode.parentNode;
-      if (lastNode instanceof HTMLSpanElement && cursor.current)
-        text.current?.insertBefore(cursor.current, lastNode.nextSibling);
-
-      console.log(selection);
+      if (lastNode instanceof HTMLSpanElement && cursor.current) {
+        if (direction === "forward")
+          text.current?.insertBefore(cursor.current, lastNode.nextSibling);
+        else
+          text.current?.insertBefore(cursor.current, lastNode.previousSibling);
+      }
+      console.log(selection.toString());
     }
   };
 
@@ -186,6 +241,18 @@ const Dashboard = () => {
 
   return (
     <Flex width="100vw" justify="center" overflow="hidden">
+      <Menu>
+        <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+          Actions
+        </MenuButton>
+        <MenuList>
+          <MenuItem>Download</MenuItem>
+          <MenuItem>Create a Copy</MenuItem>
+          <MenuItem>Mark as Draft</MenuItem>
+          <MenuItem>Delete</MenuItem>
+          <MenuItem>Attend a Workshop</MenuItem>
+        </MenuList>
+      </Menu>
       <Box
         alignSelf="center"
         margin="4em"
