@@ -250,6 +250,8 @@ const Dashboard = () => {
       overflow="hidden"
       direction="column"
       margin={10}
+      maxWidth="93vw"
+      overflowX="hidden"
     >
       <Menu>
         <MenuButton
@@ -280,7 +282,7 @@ const Dashboard = () => {
       <Box
         alignSelf="center"
         margin="4em"
-        width="100%"
+        width="90%"
         textAlign="center"
         height="60vh"
         overflow="hidden scroll"
