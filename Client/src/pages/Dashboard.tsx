@@ -164,6 +164,10 @@ const Dashboard = () => {
     }
   };
 
+  const changeFont = (font: string) => {
+    if (text.current) text.current.style.fontFamily = font;
+  };
+
   const handleClick = (e: MouseEvent) => {
     const target = e.target;
     if (target === container.current && cursor.current) {
@@ -240,17 +244,37 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <Flex width="100vw" justify="center" overflow="hidden">
+    <Flex
+      width="100vw"
+      justify="center"
+      overflow="hidden"
+      direction="column"
+      margin={10}
+    >
       <Menu>
-        <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-          Actions
+        <MenuButton
+          px={4}
+          py={2}
+          width={200}
+          transition="all 0.2s"
+          borderRadius="md"
+          borderWidth="1px"
+          _hover={{ bg: "gray.400" }}
+          _expanded={{ bg: "blue.400" }}
+          _focus={{ boxShadow: "outline" }}
+          as={Button}
+          rightIcon={<ChevronDownIcon />}
+        >
+          Change Fonts
         </MenuButton>
         <MenuList>
-          <MenuItem>Download</MenuItem>
-          <MenuItem>Create a Copy</MenuItem>
-          <MenuItem>Mark as Draft</MenuItem>
-          <MenuItem>Delete</MenuItem>
-          <MenuItem>Attend a Workshop</MenuItem>
+          <MenuItem onClick={() => changeFont("Verdana")}>Verdana</MenuItem>
+          <MenuItem onClick={() => changeFont("Sans-serif")}>
+            Sans-serif
+          </MenuItem>
+          <MenuItem onClick={() => changeFont("Monospace")}>Monospace</MenuItem>
+          <MenuItem onClick={() => changeFont("Cursive")}>Cursive</MenuItem>
+          <MenuItem onClick={() => changeFont("Fantasy")}>Fantasy</MenuItem>
         </MenuList>
       </Menu>
       <Box
